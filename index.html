@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora Neon Estrelada</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: #111;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+    }
+
+    .estrelas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .estrela {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #00ffe0;
+      border-radius: 50%;
+      animation: brilhar 2s infinite alternate ease-in-out;
+      opacity: 0.2;
+    }
+
+    @keyframes brilhar {
+      from {
+        opacity: 0.2;
+        transform: scale(1);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1.4);
+      }
+    }
+
+    .calculadora {
+      background: #1b1b1b;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #00ffe0, 0 0 40px #00ffe05a;
+      border: 2px solid #00ffe0;
+      width: 280px;
+      z-index: 1;
+    }
+
+    #resultado {
+      width: 100%;
+      height: 50px;
+      font-size: 28px;
+      text-align: right;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #000;
+      color: #0ff;
+      box-shadow: inset 0 0 5px #00ffe0;
+    }
+
+    .botoes {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 20px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #292929, #1a1a1a);
+      color: #fff;
+      box-shadow: 0 0 10px #444;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00ffe0;
+      color: #000;
+      box-shadow: 0 0 10px #00ffe0, 0 0 20px #00ffe05a;
+    }
+
+    .igual {
+      background: #a3e4ff;
+      color: #000;
+    }
+
+    .igual:hover {
+      background: #d3f3ff;
+      box-shadow: 0 0 10px #a3e4ff, 0 0 20px #d3f3ff88;
+    }
+
+    .limpar {
+      background: #d3a4ff;
+      color: #000;
+    }
+
+    .limpar:hover {
+      background: #e8caff;
+      box-shadow: 0 0 10px #d3a4ff, 0 0 20px #e8caff88;
+    }
+  </style>
+</head>
+<body>
+
+<div class="estrelas" id="estrelas"></div>
+
+<div class="calculadora">
+  <input type="text" id="resultado" disabled>
+  <div class="botoes">
+    <button onclick="add('7')">7</button>
+    <button onclick="add('8')">8</button>
+    <button onclick="add('9')">9</button>
+    <button onclick="add('/')">/</button>
+
+    <button onclick="add('4')">4</button>
+    <button onclick="add('5')">5</button>
+    <button onclick="add('6')">6</button>
+    <button onclick="add('*')">*</button>
+
+    <button onclick="add('1')">1</button>
+    <button onclick="add('2')">2</button>
+    <button onclick="add('3')">3</button>
+    <button onclick="add('-')">-</button>
+
+    <button onclick="add('0')">0</button>
+    <button onclick="add('.')">.</button>
+    <button onclick="calcular()" class="igual">=</button>
+    <button onclick="add('+')">+</button>
+
+    <button onclick="limpar()" class="limpar" style="grid-column: span 4">C</button>
+  </div>
+</div>
+
+<script>
+  function add(valor) {
+    document.getElementById('resultado').value += valor;
+  }
+
+  function limpar() {
+    document.getElementById('resultado').value = '';
+  }
+
+  function calcular() {
+    const expressao = document.getElementById('resultado').value.trim();
+    const operadores = ['+', '-', '*', '/'];
+    let operadorUsado;
+
+    for (let op of operadores) {
+      if (expressao.includes(op)) {
+        operadorUsado = op;
+        break;
+      }
+    }
+
+    if (!operadorUsado) {
+      alert('Expressão inválida. Use +, -, * ou /.');
+      return;
+    }
+
+    const [n1, n2] = expressao.split(operadorUsado).map(parseFloat);
+
+    if (isNaN(n1) || isNaN(n2)) {
+      alert('Números inválidos.');
+      return;
+    }
+
+    let resultado;
+
+    switch (operadorUsado) {
+      case '+':
+        resultado = n1 + n2;
+        break;
+      case '-':
+        resultado = n1 - n2;
+        break;
+      case '*':
+        resultado = n1 * n2;
+        break;
+      case '/':
+        if (n2 === 0) {
+          alert('Divisão por zero não permitida.');
+          return;
+        }
+        resultado = n1 / n2;
+        break;
+      default:
+        alert('Operador inválido.');
+        return;
+    }
+
+    document.getElementById('resultado').value = resultado;
+  }
+
+  const container = document.getElementById('estrelas');
+  for (let i = 0; i < 100; i++) {
+    const estrela = document.createElement('div');
+    estrela.classList.add('estrela');
+    estrela.style.left = `${Math.random() * 100}%`;
+    estrela.style.top = `${Math.random() * 100}%`;
+    estrela.style.animationDuration = `${1.5 + Math.random() * 3}s`;
+    estrela.style.animationDelay = `${Math.random() * 5}s`;
+    container.appendChild(estrela);
+  }
+</script>
+
+</body>
+</html>
