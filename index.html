@@ -163,54 +163,22 @@
 
   function calcular() {
     const expressao = document.getElementById('resultado').value.trim();
-    const operadores = ['+', '-', '*', '/'];
-    let operadorUsado;
-
-    for (let op of operadores) {
-      if (expressao.includes(op)) {
-        operadorUsado = op;
-        break;
-      }
-    }
-
-    if (!operadorUsado) {
-      alert('Expressão inválida. Use +, -, * ou /.');
+  
+    // Verifica se a expressão só contém caracteres válidos
+    if (!/^[\d+\-*/.() ]+$/.test(expressao)) {
+      alert("Expressão inválida. Use apenas números e operadores (+ - * /).");
       return;
     }
-
-    const [n1, n2] = expressao.split(operadorUsado).map(parseFloat);
-
-    if (isNaN(n1) || isNaN(n2)) {
-      alert('Números inválidos.');
-      return;
+  
+    try {
+      // Avalia a expressão com segurança
+      const resultado = new Function(`return ${expressao}`)();
+      document.getElementById('resultado').value = resultado;
+    } catch (e) {
+      alert("Erro ao calcular. Verifique a expressão.");
     }
-
-    let resultado;
-
-    switch (operadorUsado) {
-      case '+':
-        resultado = n1 + n2;
-        break;
-      case '-':
-        resultado = n1 - n2;
-        break;
-      case '*':
-        resultado = n1 * n2;
-        break;
-      case '/':
-        if (n2 === 0) {
-          alert('Divisão por zero não permitida.');
-          return;
-        }
-        resultado = n1 / n2;
-        break;
-      default:
-        alert('Operador inválido.');
-        return;
-    }
-
-    document.getElementById('resultado').value = resultado;
   }
+  
 
   const container = document.getElementById('estrelas');
   for (let i = 0; i < 100; i++) {
